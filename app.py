@@ -6,26 +6,35 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import os
+import urllib.parse
 
 # Create Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
 
-# Database configuration
-if os.environ.get('WEBSITE_HOSTNAME'):  # Running on Azure
-    # Use managed identity authentication with Entra-only database
-    connection_string = (
-        "Driver={ODBC Driver 18 for SQL Server};"
-        "Server=tcp:fire-truck-insp-db-svr.database.windows.net,1433;"
-        "Database=fire-truck-inspection-db;"
-        "Authentication=ActiveDirectoryMsi;"
-        "Encrypt=yes;"
-        "TrustServerCertificate=no;"
-        "Connection Timeout=30;"
-    )
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"mssql+pyodbc:///?odbc_connect={connection_string}"
-else:
-    # Local development with SQLite
+try:
+    if os.environ.get('WEBSITE_HOSTNAME'):  # Running on Azure
+        server = "fire-truck-insp-db-svr.database.windows.net"
+        database = "fire-truck-inspection-db"
+        
+        connection_string = (
+            f"DRIVER={{ODBC Driver 18 for SQL Server}};"
+            f"SERVER={server};"
+            f"DATABASE={database};"
+            f"Authentication=ActiveDirectoryMsi;"
+            f"Encrypt=yes;"
+            f"TrustServerCertificate=no;"
+        )
+        
+        params = urllib.parse.quote_plus(connection_string)
+        app.config['SQLALCHEMY_DATABASE_URI'] = f"mssql+pyodbc:///?odbc_connect={params}"
+        print(f"Azure SQL configured: {server}/{database}")
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///fire_inspection.db'
+        print("SQLite configured for local development")
+except Exception as e:
+    print(f"Database configuration error: {e}")
+    # Fallback to SQLite
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///fire_inspection.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
