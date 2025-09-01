@@ -10,7 +10,24 @@ import os
 # Create Flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///fire_inspection.db'
+
+# Database configuration
+if os.environ.get('WEBSITE_HOSTNAME'):  # Running on Azure
+    # Use managed identity authentication with Entra-only database
+    connection_string = (
+        "Driver={ODBC Driver 18 for SQL Server};"
+        "Server=tcp:fire-truck-insp-db-svr.database.windows.net,1433;"
+        "Database=fire-truck-inspection-db;"
+        "Authentication=ActiveDirectoryMsi;"
+        "Encrypt=yes;"
+        "TrustServerCertificate=no;"
+        "Connection Timeout=30;"
+    )
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"mssql+pyodbc:///?odbc_connect={connection_string}"
+else:
+    # Local development with SQLite
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///fire_inspection.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
