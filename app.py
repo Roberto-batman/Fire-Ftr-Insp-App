@@ -12,6 +12,7 @@ import urllib.parse
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
 
+
 try:
     if os.environ.get('WEBSITE_HOSTNAME'):  # Running on Azure
         server = "fire-truck-insp-db-svr.database.windows.net"
