@@ -1,26 +1,5 @@
 # app.py - Minimal test version to verify everything works
 
-from werkzeug.security import generate_password_hash
-from app import app, db
-from models import User  # your SQLAlchemy model
-
-@app.route('/init-db')
-def init_db():
-    try:
-        db.create_all()  # creates all tables
-        # Add demo user if not exists
-        if not User.query.filter_by(username='admin').first():
-            admin_user = User(
-                username='admin',
-                password_hash=generate_password_hash('password'),
-                is_admin=True
-            )
-            db.session.add(admin_user)
-            db.session.commit()
-        return "Database initialized and demo user added!"
-    except Exception as e:
-        return f"Error: {str(e)}"
-
 
 
 
