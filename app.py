@@ -13,25 +13,15 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
 
 try:
+# Database configuration
     if os.environ.get('WEBSITE_HOSTNAME'):  # Running on Azure
         server = "fire-truck-insp-db-svr.database.windows.net"
         database = "fire-truck-inspection-db"
         
-        connection_string = (
-            f"DRIVER={{ODBC Driver 18 for SQL Server}};"
-            f"SERVER={server};"
-            f"DATABASE={database};"
-            f"Authentication=ActiveDirectoryMsi;"
-            f"Encrypt=yes;"
-            f"TrustServerCertificate=no;"
-        )
-        
-        params = urllib.parse.quote_plus(connection_string)
-        app.config['SQLALCHEMY_DATABASE_URI'] = f"mssql+pyodbc:///?odbc_connect={params}"
-        print(f"Azure SQL configured: {server}/{database}")
+        # Use pymssql instead of pyodbc
+        app.config['SQLALCHEMY_DATABASE_URI'] = f"mssql+pymssql://@{server}/{database}?authentication=ActiveDirectoryMsi&encrypt=true"
     else:
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///fire_inspection.db'
-        print("SQLite configured for local development")
 except Exception as e:
     print(f"Database configuration error: {e}")
     # Fallback to SQLite
