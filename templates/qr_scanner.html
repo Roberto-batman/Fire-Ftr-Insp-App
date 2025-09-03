@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}QR Scanner - Fire Inspection System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow">
+            <div class="card-header-fire card-header text-center">
+                <h4 class="mb-0"><i class="bi bi-qr-code-scan"></i> QR Code Scanner</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <p class="lead">Scan equipment QR codes for quick access to inspection forms</p>
+                </div>
+                
+                <!-- Demo QR Codes -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h6>Demo: Unit 9110 Pumper</h6>
+                                <div class="qr-demo mb-3" style="background: #f8f9fa; padding: 20px;">
+                                    <i class="bi bi-qr-code" style="font-size: 3rem;"></i>
+                                </div>
+                                <a href="{{ url_for('equipment_detail', qr_code='ESP9110') }}" class="btn btn-fire btn-sm">
+                                    Access ESP9110
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h6>Demo: SCBA Unit 1</h6>
+                                <div class="qr-demo mb-3" style="background: #f8f9fa; padding: 20px;">
+                                    <i class="bi bi-qr-code" style="font-size: 3rem;"></i>
+                                </div>
+                                <a href="{{ url_for('equipment_detail', qr_code='SCBA001') }}" class="btn btn-fire btn-sm">
+                                    Access SCBA001
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info text-center">
+                    <h6><i class="bi bi-info-circle"></i> Demo Mode</h6>
+                    <p class="mb-0">Click the demo buttons above to simulate QR code scanning</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

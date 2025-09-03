@@ -1,0 +1,113 @@
+
+<!-- templates/index.html - Professional landing page -->
+{% extends "base.html" %}
+
+{% block title %}Fire Inspection System - Espanola Fire Department Demo{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto text-center">
+        <!-- Hero Section -->
+        <div class="card border-0 shadow-lg mb-5">
+            <div class="card-body p-5">
+                <div class="mb-4">
+                    <i class="bi bi-shield-check text-danger" style="font-size: 4rem;"></i>
+                </div>
+                <h1 class="display-4 fw-bold text-dark mb-3">Fire Equipment Inspection System</h1>
+                <p class="lead text-muted mb-4">
+                    Professional digital solution for fire department equipment tracking and inspection management
+                </p>
+                <div class="alert alert-info">
+                    <strong><i class="bi bi-info-circle"></i> Demo Configuration</strong><br>
+                    Configured for Espanola Fire Department - Unit 9110 Equipment Tracking
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Features -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-qr-code-scan text-danger mb-3" style="font-size: 2.5rem;"></i>
+                        <h5>QR Code Scanning</h5>
+                        <p class="text-muted">Quick equipment identification and inspection access</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-clipboard-check text-danger mb-3" style="font-size: 2.5rem;"></i>
+                        <h5>Digital Inspections</h5>
+                        <p class="text-muted">Paperless inspection forms with automatic timestamping</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-graph-up text-danger mb-3" style="font-size: 2.5rem;"></i>
+                        <h5>Analytics Dashboard</h5>
+                        <p class="text-muted">Real-time reporting and compliance tracking</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo Access -->
+        <div class="card border-0 shadow">
+            <div class="card-header-fire card-header">
+                <h4 class="mb-0"><i class="bi bi-door-open"></i> System Access</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="{{ url_for('login') }}" class="btn btn-fire btn-lg w-100">
+                            <i class="bi bi-box-arrow-in-right"></i> Login to System
+                        </a>
+                        <small class="text-muted d-block mt-2">Access full inspection system</small>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ url_for('qr_scanner') }}" class="btn btn-outline-secondary btn-lg w-100">
+                            <i class="bi bi-qr-code-scan"></i> QR Scanner Demo
+                        </a>
+                        <small class="text-muted d-block mt-2">Try the QR scanning interface</small>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="fw-bold">Demo Credentials</h6>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Admin Access:</strong><br>
+                            WBrunton_a / HGirard_a<br>
+                            <small class="text-muted">Password: TempAdmin123!</small>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>User Access:</strong><br>
+                            WBrunton / HGirard<br>
+                            <small class="text-muted">Password: TempUser123!</small>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning mt-3 mb-0">
+                        <small><i class="bi bi-exclamation-triangle"></i> You'll be prompted to change your password on first login</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Details -->
+        <div class="mt-5">
+            <h6 class="text-muted">Technical Implementation</h6>
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <span class="badge bg-primary">Azure App Service</span>
+                <span class="badge bg-primary">Azure SQL Database</span>
+                <span class="badge bg-success">Flask Framework</span>
+                <span class="badge bg-info">Bootstrap UI</span>
+                <span class="badge bg-warning text-dark">QR Code Integration</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
