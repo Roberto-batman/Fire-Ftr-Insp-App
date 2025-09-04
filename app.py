@@ -387,11 +387,8 @@ def qr_scanner():
 @app.route('/equipment/<qr_code>')
 @login_required
 def equipment_detail(qr_code):
-    """Equipment details and inspection history"""
+    """Equipment details and inspection history - Demo accessible"""
     try:
-        if current_user.must_change_password:
-            return redirect(url_for('change_password'))
-        
         equipment = Equipment.query.filter_by(qr_code=qr_code, active=True).first_or_404()
         recent_inspections = Inspection.query.filter_by(equipment_id=equipment.id).order_by(Inspection.inspection_date.desc()).limit(10).all()
         
