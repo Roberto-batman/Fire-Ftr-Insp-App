@@ -1,0 +1,153 @@
+
+<!-- templates/admin/qr_display.html - QR code display for printing -->
+{% extends "base.html" %}
+
+{% block title %}QR Code - {{ equipment.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow">
+            <div class="card-header-fire card-header text-center">
+                <h4 class="mb-0"><i class="bi bi-qr-code"></i> Equipment QR Code</h4>
+            </div>
+            <div class="card-body text-center p-4">
+                <h5 class="mb-3">{{ equipment.name }}</h5>
+                
+                <!-- QR Code Image -->
+                <div class="mb-4">
+                    <img src="data:image/png;base64,{{ qr_image }}" alt="QR Code for {{ equipment.name }}" class="img-fluid" style="max-width: 300px;">
+                </div>
+                
+                <div class="alert alert-info">
+                    <strong>QR Code URL:</strong><br>
+                    <code>{{ qr_url }}</code>
+                </div>
+                
+                <div class="row text-start">
+                    <div class="col-6">
+                        <strong>Equipment:</strong> {{ equipment.name }}<br>
+                        <strong>Serial:</strong> {{ equipment.serial_number }}<br>
+                        <strong>Location:</strong> {{ equipment.location }}
+                    </div>
+                    <div class="col-6">
+                        <strong>QR ID:</strong> {{ equipment.qr_code }}<br>
+                        <strong>Type:</strong> {{ equipment.equipment_type.title() }}<br>
+                        <strong>Status:</strong> <span class="badge bg-success">Active</span>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 mt-4">
+                    <button onclick="window.print()" class="btn btn-fire">
+                        <i class="bi bi-printer"></i> Print QR Code
+                    </button>
+                    <a href="{{ url_for('equipment_detail', qr_code=equipment.qr_code) }}" class="btn btn-outline-primary">
+                        <i class="bi bi-arrow-left"></i> Back to Equipment
+                    </a>
+                    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-house"></i> Admin Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .navbar, .footer, .btn, .alert-info {
+        display: none !important;
+    }
+    .card {
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .card-header-fire {
+        background-color: #000 !important;
+        color: #fff !important;
+    }
+}
+</style>
+{% endblock %} p-5">
+                <div class="mb-4">
+                    <i class="bi bi-truck text-danger" style="font-size: 4rem;"></i>
+                </div>
+                <h1 class="display-4 fw-bold text-dark mb-3">Fire Equipment Inspection System</h1>
+                <p class="lead text-muted mb-4">
+                    Professional digital solution for fire department equipment tracking and inspection management
+                </p>
+                <div class="alert alert-info">
+                    <strong><i class="bi bi-info-circle"></i> Demo Configuration</strong><br>
+                    Configured for Espanola Fire Department - Unit 9110 Equipment Tracking
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Features -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-qr-code-scan text-danger mb-3" style="font-size: 2.5rem;"></i>
+                        <h5>QR Code Scanning</h5>
+                        <p class="text-muted">Quick equipment identification and inspection access</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-clipboard-check text-danger mb-3" style="font-size: 2.5rem;"></i>
+                        <h5>Digital Inspections</h5>
+                        <p class="text-muted">Paperless inspection forms with automatic timestamping</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-graph-up text-danger mb-3" style="font-size: 2.5rem;"></i>
+                        <h5>Analytics Dashboard</h5>
+                        <p class="text-muted">Real-time reporting and compliance tracking</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Access -->
+        <div class="card border-0 shadow">
+            <div class="card-header-fire card-header">
+                <h4 class="mb-0"><i class="bi bi-door-open"></i> System Access</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <a href="{{ url_for('login') }}" class="btn btn-fire btn-lg w-100">
+                            <i class="bi bi-box-arrow-in-right"></i> Login to System
+                        </a>
+                        <small class="text-muted d-block mt-2">Access full inspection system</small>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ url_for('qr_scanner') }}" class="btn btn-outline-secondary btn-lg w-100">
+                            <i class="bi bi-qr-code-scan"></i> QR Scanner Demo
+                        </a>
+                        <small class="text-muted d-block mt-2">Try the QR scanning interface</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Details -->
+        <div class="mt-5">
+            <h6 class="text-muted">Technical Implementation</h6>
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <span class="badge bg-primary">Azure App Service</span>
+                <span class="badge bg-primary">Azure SQL Database</span>
+                <span class="badge bg-success">Flask Framework</span>
+                <span class="badge bg-info">Bootstrap UI</span>
+                <span class="badge bg-warning text-dark">QR Code Integration</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

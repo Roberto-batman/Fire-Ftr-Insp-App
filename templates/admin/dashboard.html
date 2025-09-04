@@ -1,108 +1,144 @@
-
 {% extends "base.html" %}
 
-{% block title %}Dashboard - Fire Inspection System{% endblock %}
+{% block title %}Admin Dashboard - Fire Inspection System{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
-    <div>
-        <span class="badge bg-{% if current_user.is_admin %}danger{% else %}primary{% endif %} fs-6">
-            {% if current_user.is_admin %}Admin{% else %}User{% endif %}
-        </span>
-    </div>
+    <h2><i class="bi bi-gear-fill"></i> Administrator Dashboard</h2>
+    <span class="badge bg-danger fs-6">Administrator Access</span>
 </div>
 
-
+<!-- Admin Stats -->
 <div class="row g-4 mb-4">
-    <div class="col-md-6 col-lg-3">
-        <div class="card border-0 shadow h-100">
-            <div class="card-body text-center">
-                <i class="bi bi-clipboard-check text-success" style="font-size: 2rem;"></i>
-                <h4 class="mt-2 mb-0">{{ recent_inspections|length }}</h4>
-                <small class="text-muted">Recent Inspections</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <div class="card border-0 shadow h-100">
-            <div class="card-body text-center">
-                <i class="bi bi-truck text-primary" style="font-size: 2rem;"></i>
-                <h4 class="mt-2 mb-0">{{ equipment_count }}</h4>
-                <small class="text-muted">Active Equipment</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <div class="card border-0 shadow h-100">
-            <div class="card-body text-center">
-                <i class="bi bi-qr-code-scan text-warning" style="font-size: 2rem;"></i>
-                <h4 class="mt-2 mb-0">QR</h4>
-                <small class="text-muted">Scanner Ready</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <div class="card border-0 shadow h-100">
-            <div class="card-body text-center">
-                <i class="bi bi-person-check text-info" style="font-size: 2rem;"></i>
-                <h4 class="mt-2 mb-0">Active</h4>
-                <small class="text-muted">{{ current_user.username }}</small>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="row g-4 mb-4">
-    <div class="col-md-6">
-        <div class="card border-0 shadow">
-            <div class="card-header-fire card-header">
-                <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
-            </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow text-center h-100">
             <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ url_for('qr_scanner') }}" class="btn btn-fire">
-                        <i class="bi bi-qr-code-scan"></i> Start QR Scanner
-                    </a>
-                    {% if current_user.is_admin %}
-                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-danger">
-                            <i class="bi bi-gear"></i> Admin Dashboard
-                        </a>
-                    {% endif %}
-                </div>
+                <i class="bi bi-people-fill text-primary" style="font-size: 2rem;"></i>
+                <h4 class="mt-2 mb-0">{{ total_users }}</h4>
+                <small class="text-muted">System Users</small>
             </div>
         </div>
     </div>
-    
-    <div class="col-md-6">
+    <div class="col-md-3">
+        <div class="card border-0 shadow text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-truck text-success" style="font-size: 2rem;"></i>
+                <h4 class="mt-2 mb-0">{{ total_equipment }}</h4>
+                <small class="text-muted">Equipment Items</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-clipboard-data text-warning" style="font-size: 2rem;"></i>
+                <h4 class="mt-2 mb-0">{{ total_inspections }}</h4>
+                <small class="text-muted">Total Inspections</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-shield-check text-info" style="font-size: 2rem;"></i>
+                <h4 class="mt-2 mb-0">Online</h4>
+                <small class="text-muted">System Status</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Admin Content -->
+<div class="row g-4">
+    <div class="col-lg-8">
         <div class="card border-0 shadow">
             <div class="card-header bg-light">
-                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Activity</h5>
+                <h5 class="mb-0"><i class="bi bi-activity"></i> Recent System Activity</h5>
             </div>
             <div class="card-body">
                 {% if recent_inspections %}
-                    <div class="list-group list-group-flush">
-                        {% for inspection in recent_inspections %}
-                            <div class="list-group-item px-0 border-0">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <h6 class="mb-1">{{ inspection.equipment.name }}</h6>
-                                        <small class="text-muted">{{ inspection.inspection_date.strftime('%Y-%m-%d %H:%M') }}</small>
-                                    </div>
-                                    <span class="badge bg-{% if inspection.status == 'passed' %}success{% elif inspection.status == 'failed' %}danger{% else %}warning{% endif %}">
-                                        {{ inspection.status.title() }}
-                                    </span>
-                                </div>
-                            </div>
-                        {% endfor %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Equipment</th>
+                                    <th>Inspector</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for inspection in recent_inspections %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ inspection.equipment.name }}</strong><br>
+                                            <small class="text-muted">{{ inspection.equipment.serial_number }}</small>
+                                        </td>
+                                        <td>{{ inspection.user.username }}</td>
+                                        <td>{{ inspection.inspection_date.strftime('%m/%d %H:%M') }}</td>
+                                        <td>
+                                            <span class="badge status-badge-{{ inspection.status }}">
+                                                {{ inspection.status.title() }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('equipment_detail', qr_code=inspection.equipment.qr_code) }}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                View Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 {% else %}
-                    <p class="text-muted text-center mb-0">No recent inspections</p>
-                    <div class="text-center mt-2">
-                        <a href="{{ url_for('qr_scanner') }}" class="btn btn-sm btn-outline-primary">Start First Inspection</a>
+                    <div class="text-center py-4">
+                        <i class="bi bi-clipboard-x text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-2">No inspection activity yet</p>
                     </div>
                 {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow">
+            <div class="card-header-fire card-header">
+                <h5 class="mb-0"><i class="bi bi-tools"></i> Admin Tools</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('qr_scanner') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-qr-code-scan"></i> QR Scanner
+                    </a>
+                    <button class="btn btn-outline-secondary" disabled>
+                        <i class="bi bi-people"></i> User Management
+                    </button>
+                    <button class="btn btn-outline-info" disabled>
+                        <i class="bi bi-graph-up"></i> Reports & Analytics
+                    </button>
+                    <a href="{{ url_for('debug_info') }}" class="btn btn-outline-warning">
+                        <i class="bi bi-bug"></i> System Diagnostics
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Information -->
+        <div class="card border-0 shadow mt-4">
+            <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="bi bi-info-circle"></i> System Information</h6>
+            </div>
+            <div class="card-body">
+                <small class="text-muted">
+                    <strong>Database:</strong> Azure SQL<br>
+                    <strong>Platform:</strong> Azure App Service<br>
+                    <strong>Framework:</strong> Flask 3.0<br>
+                    <strong>Version:</strong> 1.0.0-demo<br>
+                    <strong>Department:</strong> Espanola Fire Dept.
+                </small>
             </div>
         </div>
     </div>

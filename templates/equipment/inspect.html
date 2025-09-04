@@ -1,0 +1,78 @@
+
+<!-- templates/equipment/inspect.html - Inspection form -->
+{% extends "base.html" %}
+
+{% block title %}Inspect {{ equipment.name }} - Fire Inspection System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-clipboard-check"></i> Equipment Inspection</h2>
+    <a href="{{ url_for('equipment_detail', qr_code=equipment.qr_code) }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Equipment
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">{{ equipment.name }} - {{ equipment.serial_number }}</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Inspection Result</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="status" id="passed" value="passed" required>
+                            <label class="form-check-label text-success fw-bold" for="passed">
+                                <i class="bi bi-check-circle-fill"></i> PASSED - Equipment is operational and compliant
+                            </label>
+                            <div class="form-text">Equipment meets all safety and operational standards</div>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="status" id="failed" value="failed" required>
+                            <label class="form-check-label text-danger fw-bold" for="failed">
+                                <i class="bi bi-x-circle-fill"></i> FAILED - Equipment needs attention or repair
+                            </label>
+                            <div class="form-text">Equipment has issues that prevent safe operation</div>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="status" id="pending" value="pending" required>
+                            <label class="form-check-label text-warning fw-bold" for="pending">
+                                <i class="bi bi-clock-fill"></i> PENDING - Inspection incomplete or requires follow-up
+                            </label>
+                            <div class="form-text">Additional inspection or maintenance needed</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="notes" class="form-label fw-bold">Inspection Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="6" 
+                                  placeholder="Record detailed observations, issues found, maintenance required, or any other relevant information..."></textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong><i class="bi bi-person-badge"></i> Inspector:</strong> {{ current_user.username }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong><i class="bi bi-calendar-check"></i> Date:</strong> {{ moment().format('YYYY-MM-DD HH:mm') if moment else 'Current Time' }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-fire btn-lg">
+                            <i class="bi bi-check-circle"></i> Complete Inspection
+                        </button>
+                        <a href="{{ url_for('equipment_detail', qr_code=equipment.qr_code) }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel Inspection
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

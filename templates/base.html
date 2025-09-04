@@ -1,4 +1,4 @@
-<!-- templates/base.html - Base template for consistent styling -->
+<!-- templates/base.html - Base template with professional styling -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,6 +15,7 @@
             --fire-red: #dc3545;
             --fire-orange: #fd7e14;
             --fire-dark: #212529;
+            --fire-blue: #0d6efd;
         }
         
         .navbar-brand {
@@ -54,6 +55,10 @@
         main {
             flex: 1;
         }
+        
+        .status-badge-passed { background-color: #28a745; }
+        .status-badge-failed { background-color: #dc3545; }
+        .status-badge-pending { background-color: #ffc107; color: #212529; }
     </style>
 </head>
 <body>
@@ -61,7 +66,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <i class="bi bi-truck"></i> Fire Inspection System
+                <i class="bi bi-shield-check"></i> Fire Inspection System
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -78,7 +83,7 @@
                             <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('qr_scanner') }}">QR Scanner</a>
+                            <a class="nav-link" href="{{ url_for('qr_scanner') }}">Scanner</a>
                         </li>
                         {% if current_user.is_admin %}
                             <li class="nav-item">
@@ -93,6 +98,7 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-person-circle"></i> {{ current_user.username }}
+                                {% if current_user.is_admin %}<span class="badge bg-danger ms-1">Admin</span>{% endif %}
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{{ url_for('change_password') }}">Change Password</a></li>
@@ -134,11 +140,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h6>Fire Inspection System</h6>
+                    <h6><i class="bi bi-shield-check"></i> Fire Inspection System</h6>
                     <p class="mb-0">Professional equipment tracking and inspection management</p>
                 </div>
                 <div class="col-md-6 text-md-end">
-                    <small>Developed for professional fire departments | Azure Cloud Solution</small>
+                    <small>Azure Cloud Solution | Developed for Fire Departments</small>
                 </div>
             </div>
         </div>
