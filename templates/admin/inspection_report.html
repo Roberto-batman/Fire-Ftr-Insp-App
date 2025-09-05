@@ -1,0 +1,59 @@
+<!-- templates/admin/inspection_report.html -->
+{% extends "base.html" %}
+
+{% block title %}Inspection Report - Unit 9110{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-file-earmark-text"></i> Inspection Report</h2>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Admin
+    </a>
+</div>
+
+<div class="card border-0 shadow">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Unit 9110 Inspections - Last {{ days }} Days</h5>
+        <small class="text-muted">From {{ start_date.strftime('%Y-%m-%d') }} to today</small>
+    </div>
+    <div class="card-body">
+        {% if inspections %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date/Time</th>
+                            <th>Locker</th>
+                            <th>Inspector</th>
+                            <th>Status</th>
+                            <th>Completion %</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inspection in inspections %}
+                            <tr>
+                                <td>{{ inspection.inspection_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>{{ inspection.equipment.name }}</td>
+                                <td>{{ inspection.user.username }}</td>
+                                <td>
+                                    <span class="badge status-badge-{{ inspection.status }}">
+                                        {{ inspection.status.title() }}
+                                    </span>
+                                </td>
+                                <td>{{ "%.1f"|format(inspection.completion_percentage or 0) }}%</td>
+                                <td>{{ inspection.notes or '-' }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-4">
+                <i class="bi bi-clipboard-x text-muted" style="font-size: 3rem;"></i>
+                <p class="text-muted mt-2">No inspections found for the selected period</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

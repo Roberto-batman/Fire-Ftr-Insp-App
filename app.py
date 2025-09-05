@@ -608,17 +608,22 @@ def inspection_report():
         flash('Access denied', 'error')
         return redirect(url_for('dashboard'))
     
-    # Get date range from query params
-    days = int(request.args.get('days', 7))
-    start_date = datetime.utcnow() - timedelta(days=days)
-    
-    inspections = Inspection.query.filter(Inspection.inspection_date >= start_date)\
-        .order_by(Inspection.inspection_date.desc()).all()
-    
-    return render_template('admin/inspection_report.html',
-                         inspections=inspections,
-                         days=days,
-                         start_date=start_date)
+    try:
+        # Get date range from query params
+        days = int(request.args.get('days', 7))
+        start_date = datetime.utcnow() - timedelta(days=days)
+        
+        inspections = Inspection.query.filter(Inspection.inspection_date >= start_date)\
+            .order_by(Inspection.inspection_date.desc()).all()
+        
+        return render_template('admin/inspection_report.html',
+                             inspections=inspections,
+                             days=days,
+                             start_date=start_date)
+    except Exception as e:
+        logger.error(f"Error in inspection_report: {e}")
+        flash('Error generating report', 'error')
+        return redirect(url_for('admin_dashboard'))
 
 # Initialize database on startup
 try:
