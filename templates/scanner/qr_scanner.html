@@ -1,68 +1,125 @@
-
-<!-- templates/scanner/qr_scanner.html - QR scanner interface -->
+<!-- templates/scanner/qr_scanner.html - Updated with real Unit 9110 lockers -->
 {% extends "base.html" %}
 
-{% block title %}QR Scanner - Fire Inspection System{% endblock %}
+{% block title %}QR Scanner - Unit 9110 Inspection{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-lg-8">
+    <div class="col-lg-10">
         <div class="card border-0 shadow">
             <div class="card-header-fire card-header text-center">
-                <h4 class="mb-0"><i class="bi bi-qr-code-scan"></i> QR Code Scanner</h4>
+                <h4 class="mb-0"><i class="bi bi-qr-code-scan"></i> Unit 9110 Locker Scanner</h4>
             </div>
             <div class="card-body p-4">
                 <div class="text-center mb-4">
-                    <p class="lead">Scan equipment QR codes for quick access to inspection forms</p>
+                    <p class="lead">Scan locker QR codes to access real Unit 9110 inventory</p>
                 </div>
                 
-                <!-- Demo QR Codes -->
+                <!-- Real Unit 9110 Lockers -->
                 <div class="row g-3 mb-4">
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card h-100">
-                            <div class="card-body text-center">
-                                <h6>Unit 9110 Pumper</h6>
-                                <div class="qr-demo mb-3 p-3" style="background: #f8f9fa;">
-                                    <i class="bi bi-qr-code" style="font-size: 3rem;"></i>
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card h-100 border-primary">
+                            <div class="card-body text-center p-3">
+                                <h6 class="text-primary">🔥 Locker 1</h6>
+                                <small class="text-muted d-block mb-2">SCBA Storage</small>
+                                <div class="bg-light p-2 mb-2">
+                                    <i class="bi bi-qr-code" style="font-size: 2rem;"></i>
                                 </div>
-                                <a href="{{ url_for('equipment_detail', qr_code='ESP9110') }}" class="btn btn-fire btn-sm">
-                                    Inspect ESP9110
+                                <a href="{{ url_for('locker_detail', qr_code='UNIT9110_L1') }}" class="btn btn-fire btn-sm">
+                                    Scan L1
                                 </a>
+                                <div class="mt-1">
+                                    <small class="badge bg-danger">Critical</small>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-4">
+                    
+                    <div class="col-md-4 col-lg-3">
                         <div class="card h-100">
-                            <div class="card-body text-center">
-                                <h6>SCBA Unit 1</h6>
-                                <div class="qr-demo mb-3 p-3" style="background: #f8f9fa;">
-                                    <i class="bi bi-qr-code" style="font-size: 3rem;"></i>
+                            <div class="card-body text-center p-3">
+                                <h6>🚿 Locker 2</h6>
+                                <small class="text-muted d-block mb-2">Hoses & Nozzles</small>
+                                <div class="bg-light p-2 mb-2">
+                                    <i class="bi bi-qr-code" style="font-size: 2rem;"></i>
                                 </div>
-                                <a href="{{ url_for('equipment_detail', qr_code='SCBA001') }}" class="btn btn-fire btn-sm">
-                                    Inspect SCBA001
+                                <a href="{{ url_for('locker_detail', qr_code='UNIT9110_L2') }}" class="btn btn-fire btn-sm">
+                                    Scan L2
                                 </a>
+                                <div class="mt-1">
+                                    <small class="badge bg-info">27 items</small>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card h-100">
-                            <div class="card-body text-center">
-                                <h6>Fire Hose 50ft</h6>
-                                <div class="qr-demo mb-3 p-3" style="background: #f8f9fa;">
-                                    <i class="bi bi-qr-code" style="font-size: 3rem;"></i>
+                    
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card h-100 border-warning">
+                            <div class="card-body text-center p-3">
+                                <h6 class="text-warning">💨 Locker 3</h6>
+                                <small class="text-muted d-block mb-2">SCBA Bottles</small>
+                                <div class="bg-light p-2 mb-2">
+                                    <i class="bi bi-qr-code" style="font-size: 2rem;"></i>
                                 </div>
-                                <a href="{{ url_for('equipment_detail', qr_code='HOSE001') }}" class="btn btn-fire btn-sm">
-                                    Inspect HOSE001
+                                <a href="{{ url_for('locker_detail', qr_code='UNIT9110_L3') }}" class="btn btn-fire btn-sm">
+                                    Scan L3
                                 </a>
+                                <div class="mt-1">
+                                    <small class="badge bg-warning text-dark">5 bottles</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center p-3">
+                                <h6>🧯 Locker 4</h6>
+                                <small class="text-muted d-block mb-2">Extinguishers</small>
+                                <div class="bg-light p-2 mb-2">
+                                    <i class="bi bi-qr-code" style="font-size: 2rem;"></i>
+                                </div>
+                                <a href="{{ url_for('locker_detail', qr_code='UNIT9110_L4') }}" class="btn btn-fire btn-sm">
+                                    Scan L4
+                                </a>
+                                <div class="mt-1">
+                                    <small class="badge bg-success">Ready</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card h-100 border-info">
+                            <div class="card-body text-center p-3">
+                                <h6 class="text-info">📡 Locker 11</h6>
+                                <small class="text-muted d-block mb-2">Command & Comms</small>
+                                <div class="bg-light p-2 mb-2">
+                                    <i class="bi bi-qr-code" style="font-size: 2rem;"></i>
+                                </div>
+                                <a href="{{ url_for('locker_detail', qr_code='UNIT9110_L11') }}" class="btn btn-fire btn-sm">
+                                    Scan L11
+                                </a>
+                                <div class="mt-1">
+                                    <small class="badge bg-info">Mission Critical</small>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="alert alert-info text-center">
-                    <h6><i class="bi bi-info-circle"></i> Demo Mode</h6>
-                    <p class="mb-0">Click the demo buttons above to simulate QR code scanning and access equipment inspection forms</p>
+                    <h6><i class="bi bi-info-circle"></i> Real Espanola Fire Department Data</h6>
+                    <p class="mb-0">This demo uses actual inventory data from Unit 9110. Click any locker above to see real equipment lists and start an inspection.</p>
                 </div>
+                
+                {% if current_user.is_authenticated %}
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-house"></i> Back to Dashboard
+                        </a>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>

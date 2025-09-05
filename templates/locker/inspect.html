@@ -1,0 +1,157 @@
+
+<!-- templates/locker/inspect.html - Real inspection form -->
+{% extends "base.html" %}
+
+{% block title %}Inspect {{ locker.name }} - Unit 9110{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2><i class="bi bi-clipboard-check"></i> Inspecting {{ locker.name }}</h2>
+        <p class="text-muted mb-0">{{ locker.truck }} | {{ locker.description }}</p>
+    </div>
+    <a href="{{ url_for('locker_detail', qr_code=qr_code) }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> Back to Locker
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <form method="POST">
+            <div class="card border-0 shadow">
+                <div class="card-header-fire card-header">
+                    <h5 class="mb-0"><i class="bi bi-search"></i> Equipment Verification</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <strong><i class="bi bi-info-circle"></i> Instructions:</strong>
+                        Visually check each item and verify quantities. Adjust the quantity field if items are missing or damaged. 
+                        Add notes for any issues found.
+                    </div>
+                    
+                    <!-- Inspection sections -->
+                    {% for section_name, items in locker.sections.items() %}
+                        {% if items %}
+                            <div class="card mb-4">
+                                <div class="card-header bg-light">
+                                    <h6 class="mb-0">
+                                        {% if section_name == 'main' %}
+                                            <i class="bi bi-archive"></i> Main Compartment
+                                        {% elif section_name == 'left_door' %}
+                                            <i class="bi bi-arrow-left-square"></i> Left Door
+                                        {% elif section_name == 'right_door' %}
+                                            <i class="bi bi-arrow-right-square"></i> Right Door
+                                        {% else %}
+                                            {{ section_name.replace('_', ' ').title() }}
+                                        {% endif %}
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    {% for item in items %}
+                                        <div class="row mb-3 align-items-center p-2 {% if item.get('critical', False) %}border-start border-danger border-3{% endif %}">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold mb-1">
+                                                    {{ item.name }}
+                                                    {% if item.get('critical', False) %}
+                                                        <span class="badge bg-danger ms-2">Critical</span>
+                                                    {% endif %}
+                                                </label>
+                                                {% if item.type == 'functional_check' %}
+                                                    <div class="form-text">
+                                                        <i class="bi bi-lightning-charge text-warning"></i>
+                                                        Verify this is working properly
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Expected</label>
+                                                <div class="form-control-plaintext fw-bold text-primary">
+                                                    {{ item.quantity }}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="form-label">Found</label>
+                                                <input type="number" 
+                                                       class="form-control text-center" 
+                                                       name="{{ section_name }}_{{ item.name }}_qty"
+                                                       value="{{ item.quantity }}" 
+                                                       min="0" 
+                                                       max="20">
+                                            </div>
+                                            <div class="col-md-2 text-center">
+                                                {% if item.type == 'functional_check' %}
+                                                    <i class="bi bi-gear text-warning" title="Functional Check"></i>
+                                                {% else %}
+                                                    <i class="bi bi-box text-success" title="Physical Item"></i>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    <!-- Inspection Notes -->
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="bi bi-pencil-square"></i> Inspection Notes</h6>
+                        </div>
+                        <div class="card-body">
+                            <textarea class="form-control" name="notes" rows="4" 
+                                      placeholder="Record any issues, damage, missing items, or other observations..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Inspection Summary -->
+            <div class="card border-0 shadow mt-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <strong><i class="bi bi-person-badge"></i> Inspector:</strong> {{ current_user.username }}<br>
+                            <strong><i class="bi bi-calendar-check"></i> Date:</strong> {{ moment().format('YYYY-MM-DD HH:mm') if moment else 'Current Time' }}
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <button type="submit" class="btn btn-fire btn-lg me-2">
+                                <i class="bi bi-check-circle"></i> Complete Inspection
+                            </button>
+                            <a href="{{ url_for('locker_detail', qr_code=qr_code) }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Add some interactivity to highlight discrepancies
+document.addEventListener('DOMContentLoaded', function() {
+    const quantityInputs = document.querySelectorAll('input[type="number"]');
+    
+    quantityInputs.forEach(input => {
+        const expectedQty = parseInt(input.getAttribute('value'));
+        
+        input.addEventListener('change', function() {
+            const foundQty = parseInt(this.value);
+            const row = this.closest('.row');
+            
+            // Remove existing classes
+            row.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+            
+            if (foundQty === expectedQty) {
+                row.classList.add('bg-success', 'bg-opacity-10');
+            } else if (foundQty < expectedQty) {
+                row.classList.add('bg-danger', 'bg-opacity-10');
+            } else {
+                row.classList.add('bg-warning', 'bg-opacity-10');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

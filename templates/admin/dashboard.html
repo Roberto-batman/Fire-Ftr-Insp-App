@@ -1,30 +1,32 @@
+
+<!-- templates/admin/dashboard.html - Updated admin dashboard for Unit 9110 -->
 {% extends "base.html" %}
 
-{% block title %}Admin Dashboard - Fire Inspection System{% endblock %}
+{% block title %}Admin Dashboard - Unit 9110 Management{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-gear-fill"></i> Administrator Dashboard</h2>
-    <span class="badge bg-danger fs-6">Administrator Access</span>
+    <h2><i class="bi bi-gear-fill"></i> Unit 9110 Administration</h2>
+    <span class="badge bg-danger fs-6">Fire Chief Access</span>
 </div>
 
-<!-- Admin Stats -->
+<!-- System Statistics -->
 <div class="row g-4 mb-4">
     <div class="col-md-3">
         <div class="card border-0 shadow text-center h-100">
             <div class="card-body">
                 <i class="bi bi-people-fill text-primary" style="font-size: 2rem;"></i>
                 <h4 class="mt-2 mb-0">{{ total_users }}</h4>
-                <small class="text-muted">System Users</small>
+                <small class="text-muted">Firefighters</small>
             </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow text-center h-100">
             <div class="card-body">
-                <i class="bi bi-truck text-success" style="font-size: 2rem;"></i>
-                <h4 class="mt-2 mb-0">{{ total_equipment }}</h4>
-                <small class="text-muted">Equipment Items</small>
+                <i class="bi bi-archive text-success" style="font-size: 2rem;"></i>
+                <h4 class="mt-2 mb-0">{{ available_lockers|length }}</h4>
+                <small class="text-muted">Active Lockers</small>
             </div>
         </div>
     </div>
@@ -33,59 +35,78 @@
             <div class="card-body">
                 <i class="bi bi-clipboard-data text-warning" style="font-size: 2rem;"></i>
                 <h4 class="mt-2 mb-0">{{ total_inspections }}</h4>
-                <small class="text-muted">Total Inspections</small>
+                <small class="text-muted">This Week</small>
             </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow text-center h-100">
             <div class="card-body">
-                <i class="bi bi-shield-check text-info" style="font-size: 2rem;"></i>
-                <h4 class="mt-2 mb-0">Online</h4>
-                <small class="text-muted">System Status</small>
+                {% if failed_inspections > 0 %}
+                    <i class="bi bi-exclamation-triangle text-danger" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2 mb-0 text-danger">{{ failed_inspections }}</h4>
+                    <small class="text-muted">Failed</small>
+                {% elif warning_inspections > 0 %}
+                    <i class="bi bi-exclamation-circle text-warning" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2 mb-0 text-warning">{{ warning_inspections }}</h4>
+                    <small class="text-muted">Warnings</small>
+                {% else %}
+                    <i class="bi bi-shield-check text-success" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2 mb-0 text-success">✓</h4>
+                    <small class="text-muted">All Clear</small>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
 
-<!-- Main Admin Content -->
-<div class="row g-4">
+<!-- Weekly Inspection Status -->
+<div class="row g-4 mb-4">
     <div class="col-lg-8">
         <div class="card border-0 shadow">
             <div class="card-header bg-light">
-                <h5 class="mb-0"><i class="bi bi-activity"></i> Recent System Activity</h5>
+                <h5 class="mb-0"><i class="bi bi-calendar-week"></i> Weekly Inspection Status</h5>
             </div>
             <div class="card-body">
-                {% if recent_inspections %}
+                {% if locker_stats %}
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Equipment</th>
-                                    <th>Inspector</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <th>Locker</th>
+                                    <th class="text-center">Inspections</th>
+                                    <th class="text-center">Avg Completion</th>
+                                    <th class="text-center">Last Status</th>
+                                    <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for inspection in recent_inspections %}
+                                {% for qr_code, stats in locker_stats.items() %}
                                     <tr>
                                         <td>
-                                            <strong>{{ inspection.equipment.name }}</strong><br>
-                                            <small class="text-muted">{{ inspection.equipment.serial_number }}</small>
+                                            <strong>{{ stats.name }}</strong><br>
+                                            <small class="text-muted">{{ qr_code }}</small>
                                         </td>
-                                        <td>{{ inspection.user.username }}</td>
-                                        <td>{{ inspection.inspection_date.strftime('%m/%d %H:%M') }}</td>
-                                        <td>
-                                            <span class="badge status-badge-{{ inspection.status }}">
-                                                {{ inspection.status.title() }}
+                                        <td class="text-center">
+                                            <span class="badge bg-primary">{{ stats.inspections }}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            {% if stats.avg_completion >= 100 %}
+                                                <span class="badge bg-success">100%</span>
+                                            {% elif stats.avg_completion >= 95 %}
+                                                <span class="badge bg-warning text-dark">{{ "%.1f"|format(stats.avg_completion) }}%</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">{{ "%.1f"|format(stats.avg_completion) }}%</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge status-badge-{{ stats.last_status }}">
+                                                {{ stats.last_status.title() }}
                                             </span>
                                         </td>
-                                        <td>
-                                            <a href="{{ url_for('equipment_detail', qr_code=inspection.equipment.qr_code) }}" 
-                                               class="btn btn-sm btn-outline-primary">
-                                                View Details
+                                        <td class="text-center">
+                                            <a href="{{ url_for('locker_detail', qr_code=qr_code) }}" class="btn btn-sm btn-outline-primary">
+                                                View
                                             </a>
                                         </td>
                                     </tr>
@@ -95,52 +116,133 @@
                     </div>
                 {% else %}
                     <div class="text-center py-4">
-                        <i class="bi bi-clipboard-x text-muted" style="font-size: 3rem;"></i>
-                        <p class="text-muted mt-2">No inspection activity yet</p>
+                        <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-2">No inspections this week</p>
+                        <a href="{{ url_for('qr_scanner') }}" class="btn btn-primary">Start First Inspection</a>
                     </div>
                 {% endif %}
             </div>
         </div>
     </div>
-
+    
     <div class="col-lg-4">
+        <!-- Admin Tools -->
         <div class="card border-0 shadow">
             <div class="card-header-fire card-header">
-                <h5 class="mb-0"><i class="bi bi-tools"></i> Admin Tools</h5>
+                <h6 class="mb-0"><i class="bi bi-tools"></i> Fire Chief Tools</h6>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
                     <a href="{{ url_for('qr_scanner') }}" class="btn btn-outline-primary">
                         <i class="bi bi-qr-code-scan"></i> QR Scanner
                     </a>
+                    <a href="{{ url_for('inspection_report') }}" class="btn btn-outline-info">
+                        <i class="bi bi-file-earmark-pdf"></i> Export Report
+                    </a>
                     <button class="btn btn-outline-secondary" disabled>
-                        <i class="bi bi-people"></i> User Management
-                    </button>
-                    <button class="btn btn-outline-info" disabled>
-                        <i class="bi bi-graph-up"></i> Reports & Analytics
+                        <i class="bi bi-people"></i> Manage Users
                     </button>
                     <a href="{{ url_for('debug_info') }}" class="btn btn-outline-warning">
-                        <i class="bi bi-bug"></i> System Diagnostics
+                        <i class="bi bi-bug"></i> System Status
                     </a>
                 </div>
             </div>
         </div>
-
-        <!-- System Information -->
+        
+        <!-- QR Code Management -->
+        <div class="card border-0 shadow mt-4">
+            <div class="card-header bg-light">
+                <h6 class="mb-0"><i class="bi bi-qr-code"></i> QR Code Management</h6>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-3">Generate QR codes for printing and laminating</p>
+                {% for qr_code, locker_data in available_lockers.items() %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="small">{{ locker_data.name }}</span>
+                        <a href="{{ url_for('generate_qr_code', qr_code=qr_code) }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-printer"></i>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- System Info -->
         <div class="card border-0 shadow mt-4">
             <div class="card-header bg-light">
                 <h6 class="mb-0"><i class="bi bi-info-circle"></i> System Information</h6>
             </div>
             <div class="card-body">
                 <small class="text-muted">
+                    <strong>Truck:</strong> Unit 9110<br>
+                    <strong>Department:</strong> Espanola Fire Dept<br>
                     <strong>Database:</strong> Azure SQL<br>
                     <strong>Platform:</strong> Azure App Service<br>
-                    <strong>Framework:</strong> Flask 3.0<br>
-                    <strong>Version:</strong> 1.0.0-demo<br>
-                    <strong>Department:</strong> Espanola Fire Dept.
+                    <strong>Version:</strong> 2.0.0-unit9110<br>
+                    <strong>Last Update:</strong> {{ moment().format('YYYY-MM-DD') if moment else 'Today' }}
                 </small>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Recent Activity -->
+{% if recent_inspections %}
+<div class="card border-0 shadow">
+    <div class="card-header bg-light">
+        <h5 class="mb-0"><i class="bi bi-activity"></i> Recent Inspection Activity</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Date/Time</th>
+                        <th>Locker</th>
+                        <th>Inspector</th>
+                        <th class="text-center">Completion</th>
+                        <th class="text-center">Status</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inspection in recent_inspections %}
+                        <tr>
+                            <td>
+                                <small>{{ inspection.inspection_date.strftime('%m/%d %H:%M') }}</small>
+                            </td>
+                            <td>
+                                <strong>{{ inspection.equipment.name }}</strong><br>
+                                <small class="text-muted">{{ inspection.equipment.qr_code }}</small>
+                            </td>
+                            <td>{{ inspection.user.username }}</td>
+                            <td class="text-center">
+                                {% if inspection.completion_percentage >= 100 %}
+                                    <span class="badge bg-success">{{ "%.0f"|format(inspection.completion_percentage) }}%</span>
+                                {% elif inspection.completion_percentage >= 95 %}
+                                    <span class="badge bg-warning text-dark">{{ "%.0f"|format(inspection.completion_percentage) }}%</span>
+                                {% else %}
+                                    <span class="badge bg-danger">{{ "%.0f"|format(inspection.completion_percentage) }}%</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <span class="badge status-badge-{{ inspection.status }}">
+                                    {{ inspection.status.title() }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if inspection.notes %}
+                                    {{ inspection.notes[:50] }}{% if inspection.notes|length > 50 %}...{% endif %}
+                                {% else %}
+                                    <em class="text-muted">No notes</em>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}
