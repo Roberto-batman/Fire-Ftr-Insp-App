@@ -498,7 +498,7 @@ def inspect_locker(qr_code):
             
             return redirect(url_for('locker_detail', qr_code=qr_code))
         
-        return render_template('locker/inspect.html', 
+        return render_template('equipment/inspect.html', 
                              locker=locker_data, 
                              qr_code=qr_code)
     
